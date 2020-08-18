@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Voom", "Voom\Voom.csproj", "{D65B1705-E9A0-41F6-81E5-9C12AFEB4D5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Voom.Tests", "Voom.Tests\Voom.Tests.csproj", "{7018547B-7243-4452-BAD9-EB1E531A80B7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D65B1705-E9A0-41F6-81E5-9C12AFEB4D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D65B1705-E9A0-41F6-81E5-9C12AFEB4D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D65B1705-E9A0-41F6-81E5-9C12AFEB4D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D65B1705-E9A0-41F6-81E5-9C12AFEB4D5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7018547B-7243-4452-BAD9-EB1E531A80B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7018547B-7243-4452-BAD9-EB1E531A80B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7018547B-7243-4452-BAD9-EB1E531A80B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7018547B-7243-4452-BAD9-EB1E531A80B7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {279F2D14-41F5-4488-A447-108FEA6D85D1}
+	EndGlobalSection
+EndGlobal

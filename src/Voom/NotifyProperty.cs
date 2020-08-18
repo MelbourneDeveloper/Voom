@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Voom
@@ -12,6 +13,7 @@ namespace Voom
         private ValueSet<T> _valueSetCallback { get; set; }
         private ValueSet<T> _valueSet;
         private ValueGet<T> _valueGet;
+        private CheckEquality<T> _raisePropertyChangedCheck;
         #endregion
 
         #region Constructor
@@ -20,7 +22,9 @@ namespace Voom
             string propertyName,
             ValueGet<T> valueGet = null,
             ValueSet<T> valueSet = null,
-            ValueSet<T> valueSetCallback = null)
+            ValueSet<T> valueSetCallback = null,
+            CheckEquality<T> raisePropertyChangedCheck = null
+            )
         {
             _notifyPropertyChanged = notifyPropertyChanged ?? throw new ArgumentNullException(nameof(notifyPropertyChanged));
             _propertyName = propertyName ?? throw new ArgumentNullException(nameof(propertyName));
@@ -28,6 +32,7 @@ namespace Voom
             _valueSet = valueSet;
             _valueGet = valueGet;
             _valueSetCallback = valueSetCallback;
+            _raisePropertyChangedCheck = raisePropertyChangedCheck;
 
             if (_valueSet == null)
             {
@@ -37,6 +42,15 @@ namespace Voom
             if (_valueGet == null)
             {
                 _valueGet = new ValueGet<T>(() => _propertyValue);
+            }
+
+            if (_raisePropertyChangedCheck == null)
+            {
+                _raisePropertyChangedCheck = new CheckEquality<T>((o, n) =>
+                {
+                    bool v = EqualityComparer<T>.Default.Equals(o, n);
+                    return v;
+                });
             }
         }
         #endregion
@@ -54,9 +68,16 @@ namespace Voom
             }
             set
             {
+                var oldValue = _valueGet();
+                var isEqual = _raisePropertyChangedCheck(oldValue, value);
+
                 _valueSet(value);
                 _valueSetCallback?.Invoke(value);
-                _notifyPropertyChanged.RaisePropertyChanged(_propertyName);
+
+                if (!isEqual)
+                {
+                    _notifyPropertyChanged.RaisePropertyChanged(_propertyName);
+                }
             }
         }
 
