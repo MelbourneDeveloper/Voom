@@ -51,7 +51,6 @@ namespace UnitTests
             Assert.IsTrue(_propertyChangedWasRaised);
         }
 
-
         [TestMethod]
         public void TestAlwaysConsiderValueEqual()
         {
@@ -60,6 +59,26 @@ namespace UnitTests
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyProperty.Value = null;
             Assert.IsFalse(_propertyChangedWasRaised);
+        }
+
+        [TestMethod]
+        public void TestEqualValueRaisePropertyChangedDoesntFire()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName);
+            notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+            notifyProperty.Value = null;
+            Assert.IsFalse(_propertyChangedWasRaised);
+        }
+
+        [TestMethod]
+        public void TestNotEqualValueRaisePropertyChangedDoesFire()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName);
+            notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+            notifyProperty.Value = "";
+            Assert.IsTrue(_propertyChangedWasRaised);
         }
 
         [TestMethod]
