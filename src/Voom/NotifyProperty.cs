@@ -60,6 +60,14 @@ namespace Voom
         }
         #endregion
 
+        #region Hidden Members
+        ValueGet<T> INotifyProperty<T>.ValueGet { get => _valueGet; set => _valueGet = value; }
+        ValueSet<T> INotifyProperty<T>.ValueSet { get => _valueSet; set => _valueSet = value; }
+        ValueSet<T> INotifyProperty<T>.ValueSetCallback { get => _valueSetCallback; set => _valueSetCallback = value; }
+        CheckEquality<T> INotifyProperty<T>.CheckConsiderEqual { get => _checkConsiderEqual; set => _checkConsiderEqual = value; }
+
+        #endregion
+
         #region Implicit Operators
         public static implicit operator T(NotifyProperty<T> p) => p.Value;
         #endregion
@@ -84,30 +92,6 @@ namespace Voom
                     _notifyPropertyChanged.RaisePropertyChanged(_propertyName);
                 }
             }
-        }
-
-        public INotifyProperty<T> Get(ValueGet<T> valueGet)
-        {
-            _valueGet = valueGet;
-            return this;
-        }
-
-        public INotifyProperty<T> Set(ValueSet<T> valueSet)
-        {
-            _valueSet = valueSet;
-            return this;
-        }
-
-        public INotifyProperty<T> Callback(ValueSet<T> valueSetCallback)
-        {
-            _valueSetCallback = valueSetCallback;
-            return this;
-        }
-
-        public INotifyProperty<T> ConsiderValueEqualWhen(CheckEquality<T> checkConsiderEqual)
-        {
-            _checkConsiderEqual = checkConsiderEqual;
-            return this;
         }
         #endregion
     }
