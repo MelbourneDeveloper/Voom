@@ -9,11 +9,12 @@ namespace UnitTests
     {
         private const string PropertyName = "test";
         private bool _propertyChangedWasRaised = false;
+        private bool _callbackValue = false;
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestCanRaisePropertyChanged()
         {
-            var notifyPropertyChanged = new NotifyPropertyChanged();
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyPropertyChanged.RaisePropertyChanged(PropertyName);
             Assert.IsTrue(_propertyChangedWasRaised);
@@ -21,23 +22,36 @@ namespace UnitTests
 
 
         [TestMethod]
-        public void TestMethod2()
+        public void TestNotifyPropertyRaisesPropertyChanged()
         {
-            var notifyPropertyChanged = new NotifyPropertyChanged();
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
             var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyPropertyChanged.RaisePropertyChanged(PropertyName);
             Assert.IsTrue(_propertyChangedWasRaised);
         }
 
+        [TestMethod]
+        public void TestCallbackIsCalled()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName).Callback((a) => _callbackValue = true);
+            notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+            notifyProperty.Value = "test";
+            Assert.IsTrue(_callbackValue);
+        }
+
+        [TestMethod]
+        public void TestThrowsEventHandlerNotFound()
+        {
+            var notifyProperty = new NotifyProperty<string>(new MockNotifyPropertyChanged(), PropertyName);
+            
+            Assert.ThrowsException<PropertyChangedUnhandledException>(()=> notifyProperty.Value = "test");
+        }
+
         private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             _propertyChangedWasRaised = e.PropertyName == PropertyName;
         }
-    }
-
-    public class NotifyPropertyChanged : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

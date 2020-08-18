@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Voom
 {
-    public class NotifyProperty<T>
+    public class NotifyProperty<T> : IConfigurePropertyChangedNotification<T>
     {
         #region Fields
         INotifyPropertyChanged _notifyPropertyChanged;
@@ -60,19 +60,19 @@ namespace Voom
             }
         }
 
-        public NotifyProperty<T> Get(ValueGet<T> valueGet)
+        public IConfigurePropertyChangedNotification<T> Get(ValueGet<T> valueGet)
         {
             _valueGet = valueGet;
             return this;
         }
 
-        public NotifyProperty<T> Set(ValueSet<T> valueSet)
+        public IConfigurePropertyChangedNotification<T> Set(ValueSet<T> valueSet)
         {
             _valueSet = valueSet;
             return this;
         }
 
-        public NotifyProperty<T> Callback(ValueSet<T> valueSetCallback)
+        public IConfigurePropertyChangedNotification<T> Callback(ValueSet<T> valueSetCallback)
         {
             _valueSetCallback = valueSetCallback;
             return this;
