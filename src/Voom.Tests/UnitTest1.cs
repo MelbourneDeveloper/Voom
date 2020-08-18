@@ -42,6 +42,27 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void TestNeverConsiderValueEqual()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName).ConsiderValueEqualWhen((o, n) => false);
+            notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+            notifyProperty.Value = null;
+            Assert.IsTrue(_propertyChangedWasRaised);
+        }
+
+
+        [TestMethod]
+        public void TestAlwaysConsiderValueEqual()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName).ConsiderValueEqualWhen((o, n) => true);
+            notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
+            notifyProperty.Value = null;
+            Assert.IsFalse(_propertyChangedWasRaised);
+        }
+
+        [TestMethod]
         public void TestThrowsEventHandlerNotFound()
         {
             var notifyProperty = new NotifyProperty<string>(new MockNotifyPropertyChanged(), PropertyName);

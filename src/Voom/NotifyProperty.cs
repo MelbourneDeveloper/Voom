@@ -13,7 +13,7 @@ namespace Voom
         private ValueSet<T> _valueSetCallback { get; set; }
         private ValueSet<T> _valueSet;
         private ValueGet<T> _valueGet;
-        private CheckEquality<T> _raisePropertyChangedCheck;
+        private CheckEquality<T> _checkConsiderEqual;
         #endregion
 
         #region Constructor
@@ -23,7 +23,7 @@ namespace Voom
             ValueGet<T> valueGet = null,
             ValueSet<T> valueSet = null,
             ValueSet<T> valueSetCallback = null,
-            CheckEquality<T> raisePropertyChangedCheck = null
+            CheckEquality<T> checkConsiderEqual = null
             )
         {
             _notifyPropertyChanged = notifyPropertyChanged ?? throw new ArgumentNullException(nameof(notifyPropertyChanged));
@@ -32,7 +32,7 @@ namespace Voom
             _valueSet = valueSet;
             _valueGet = valueGet;
             _valueSetCallback = valueSetCallback;
-            _raisePropertyChangedCheck = raisePropertyChangedCheck;
+            _checkConsiderEqual = checkConsiderEqual;
 
             if (_valueSet == null)
             {
@@ -44,9 +44,9 @@ namespace Voom
                 _valueGet = new ValueGet<T>(() => _propertyValue);
             }
 
-            if (_raisePropertyChangedCheck == null)
+            if (_checkConsiderEqual == null)
             {
-                _raisePropertyChangedCheck = new CheckEquality<T>((o, n) => EqualityComparer<T>.Default.Equals(o, n));
+                _checkConsiderEqual = new CheckEquality<T>((o, n) => EqualityComparer<T>.Default.Equals(o, n));
             }
         }
         #endregion
@@ -65,7 +65,7 @@ namespace Voom
             set
             {
                 var oldValue = _valueGet();
-                var isEqual = _raisePropertyChangedCheck(oldValue, value);
+                var isEqual = _checkConsiderEqual(oldValue, value);
 
                 _valueSet(value);
                 _valueSetCallback?.Invoke(value);
@@ -95,9 +95,9 @@ namespace Voom
             return this;
         }
 
-        public IConfigurePropertyChangedNotification<T> RaisePropertyChangeWhen(CheckEquality<T> raisePropertyChangedCheck)
+        public IConfigurePropertyChangedNotification<T> ConsiderValueEqualWhen(CheckEquality<T> checkConsiderEqual)
         {
-            _raisePropertyChangedCheck = raisePropertyChangedCheck;
+            _checkConsiderEqual = checkConsiderEqual;
             return this;
         }
         #endregion
