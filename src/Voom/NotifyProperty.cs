@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Voom
 {
-    public class NotifyProperty<T> : IConfigurePropertyChangedNotification<T>
+    public class NotifyProperty<T> : INotifyProperty<T>
     {
         #region Fields
         INotifyPropertyChanged _notifyPropertyChanged;
@@ -17,6 +17,15 @@ namespace Voom
         #endregion
 
         #region Constructor
+        /// <summary>
+        /// Constructs a NotifyProperty
+        /// </summary>
+        /// <param name="notifyPropertyChanged">The event source</param>
+        /// <param name="propertyName">The name of the property</param>
+        /// <param name="valueGet">Getter. Defaults to getting from the backing field</param>
+        /// <param name="valueSet">Setter. Defaults to setting the backing field</param>
+        /// <param name="valueSetCallback">Logic that occurs after valueSet but before raising PropertyChanged on the event source</param>
+        /// <param name="checkConsiderEqual">Comparison check to determine whether or not PropertyChanged is raised. If true PropertyChanged is not raised. If false, PropertyChanged is raised</param>
         public NotifyProperty(
             INotifyPropertyChanged notifyPropertyChanged,
             string propertyName,
@@ -77,25 +86,25 @@ namespace Voom
             }
         }
 
-        public IConfigurePropertyChangedNotification<T> Get(ValueGet<T> valueGet)
+        public INotifyProperty<T> Get(ValueGet<T> valueGet)
         {
             _valueGet = valueGet;
             return this;
         }
 
-        public IConfigurePropertyChangedNotification<T> Set(ValueSet<T> valueSet)
+        public INotifyProperty<T> Set(ValueSet<T> valueSet)
         {
             _valueSet = valueSet;
             return this;
         }
 
-        public IConfigurePropertyChangedNotification<T> Callback(ValueSet<T> valueSetCallback)
+        public INotifyProperty<T> Callback(ValueSet<T> valueSetCallback)
         {
             _valueSetCallback = valueSetCallback;
             return this;
         }
 
-        public IConfigurePropertyChangedNotification<T> ConsiderValueEqualWhen(CheckEquality<T> checkConsiderEqual)
+        public INotifyProperty<T> ConsiderValueEqualWhen(CheckEquality<T> checkConsiderEqual)
         {
             _checkConsiderEqual = checkConsiderEqual;
             return this;
