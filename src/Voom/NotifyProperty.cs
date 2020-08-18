@@ -46,11 +46,7 @@ namespace Voom
 
             if (_raisePropertyChangedCheck == null)
             {
-                _raisePropertyChangedCheck = new CheckEquality<T>((o, n) =>
-                {
-                    bool v = EqualityComparer<T>.Default.Equals(o, n);
-                    return v;
-                });
+                _raisePropertyChangedCheck = new CheckEquality<T>((o, n) => EqualityComparer<T>.Default.Equals(o, n));
             }
         }
         #endregion
@@ -96,6 +92,12 @@ namespace Voom
         public IConfigurePropertyChangedNotification<T> Callback(ValueSet<T> valueSetCallback)
         {
             _valueSetCallback = valueSetCallback;
+            return this;
+        }
+
+        public IConfigurePropertyChangedNotification<T> RaisePropertyChangeWhen(CheckEquality<T> raisePropertyChangedCheck)
+        {
+            _raisePropertyChangedCheck = raisePropertyChangedCheck;
             return this;
         }
         #endregion
