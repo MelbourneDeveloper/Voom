@@ -85,8 +85,31 @@ namespace UnitTests
         public void TestThrowsEventHandlerNotFound()
         {
             var notifyProperty = new NotifyProperty<string>(new MockNotifyPropertyChanged(), PropertyName);
-            
-            Assert.ThrowsException<PropertyChangedUnhandledException>(()=> notifyProperty.Value = "test");
+
+            Assert.ThrowsException<PropertyChangedUnhandledException>(() => notifyProperty.Value = "test");
+        }
+
+
+        [TestMethod]
+        public void TestCallChainingSetsValue()
+        {
+            var value = 1;
+            var expectedValue = 2;
+            var callbackMade = false;
+
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+            var notifyProperty =
+                new NotifyProperty<int>(notifyPropertyChanged, PropertyName)
+                .Callback(a => callbackMade = true)
+                .ConsiderValueEqualWhen((o, n) => o != n)
+                .Get(() => value)
+                .Set((v) => value = v);
+
+
+            notifyProperty.Value = expectedValue;
+
+            Assert.AreEqual(expectedValue, value);
+            Assert.IsTrue(callbackMade);
         }
 
         private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
