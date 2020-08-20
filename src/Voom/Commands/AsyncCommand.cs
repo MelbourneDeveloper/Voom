@@ -4,10 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Voom
+namespace Voom.Commands
 {
-    public delegate Task AsyncCommandDelegate(object parameter);
-
     public class AsyncCommand : ICommand
     {
         #region Events
