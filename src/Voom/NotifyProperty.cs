@@ -7,9 +7,9 @@ namespace Voom
     public class NotifyProperty<T> : INotifyProperty<T>
     {
         #region Fields
-        INotifyPropertyChanged _notifyPropertyChanged;
+        private readonly INotifyPropertyChanged _notifyPropertyChanged;
         private T _propertyValue;
-        private string _propertyName;
+        private readonly string _propertyName;
         private ValueSet<T> _valueSetCallback { get; set; }
         private ValueSet<T> _valueSet;
         private ValueGet<T> _valueGet;
