@@ -17,9 +17,9 @@ namespace Voom
             return notifyProperty;
         }
 
-        public static INotifyProperty<T> Callback<T>(this INotifyProperty<T> notifyProperty, ValueSet<T> valueSetCallback)
+        public static INotifyProperty<T> BeforePropertyChanged<T>(this INotifyProperty<T> notifyProperty, ValueSet<T> valueSetCallback)
         {
-            notifyProperty.ValueSetCallback = valueSetCallback;
+            notifyProperty.BeforePropertyChanged = valueSetCallback;
             return notifyProperty;
         }
 

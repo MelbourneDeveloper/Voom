@@ -63,7 +63,7 @@ namespace Voom
         #region Hidden Members
         ValueGet<T> INotifyProperty<T>.ValueGet { get => _valueGet; set => _valueGet = value; }
         ValueSet<T> INotifyProperty<T>.ValueSet { get => _valueSet; set => _valueSet = value; }
-        ValueSet<T> INotifyProperty<T>.ValueSetCallback { get => _valueSetCallback; set => _valueSetCallback = value; }
+        ValueSet<T> INotifyProperty<T>.BeforePropertyChanged { get => _valueSetCallback; set => _valueSetCallback = value; }
         CheckEquality<T> INotifyProperty<T>.CheckConsiderEqual { get => _checkConsiderEqual; set => _checkConsiderEqual = value; }
 
         #endregion
