@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Voom
@@ -8,17 +7,10 @@ namespace Voom
     {
         private bool isRunning = true;
         Func<T> _func;
-        int _millisecondsTimeout = 1000;
 
-        public ObserverFactory(
-            Func<T> func,
-            int? millisecondsTimeout = null)
+        public ObserverFactory(Func<T> func)
         {
             _func = func;
-            if (millisecondsTimeout.HasValue)
-            {
-                _millisecondsTimeout = millisecondsTimeout.Value;
-            }
         }
 
         public void Dispose()
@@ -33,7 +25,6 @@ namespace Voom
                 while (isRunning)
                 {
                     observer.OnNext(_func());
-                    Thread.Sleep(_millisecondsTimeout);
                 }
             });
 
