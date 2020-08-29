@@ -26,7 +26,7 @@ namespace Voom
         /// <param name="valueSet">Setter. Defaults to setting the backing field</param>
         /// <param name="valueSetCallback">Logic that occurs after valueSet but before raising PropertyChanged on the event source</param>
         /// <param name="checkConsiderEqual">Comparison check to determine whether or not PropertyChanged is raised. If true PropertyChanged is not raised. If false, PropertyChanged is raised</param>
-        public NotifyProperty(
+        internal NotifyProperty(
             INotifyPropertyChanged notifyPropertyChanged,
             string propertyName,
             ValueGet<T> valueGet = null,

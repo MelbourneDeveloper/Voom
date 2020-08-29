@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace Voom
@@ -27,6 +28,11 @@ namespace Voom
         {
             notifyProperty.CheckConsiderEqual = checkConsiderEqual;
             return notifyProperty;
+        }
+
+        public static INotifyProperty<T> CreateNotifyProperty<T>(this INotifyPropertyChanged notifyPropertyChanged, string propertyName)
+        {
+            return new NotifyProperty<T>(notifyPropertyChanged, propertyName);
         }
 
         public static void Subscribe<T>(this ISubscribable subscribable, object subscriber, Action<T> action)
