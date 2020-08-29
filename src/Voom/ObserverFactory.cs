@@ -6,9 +6,9 @@ namespace Voom
     public class ObserverFactory<T> : IDisposable
     {
         private bool isRunning = true;
-        Func<T> _func;
+        Func<Task<T>> _func;
 
-        public ObserverFactory(Func<T> func)
+        public ObserverFactory(Func<Task<T>> func)
         {
             _func = func;
         }
@@ -20,11 +20,11 @@ namespace Voom
 
         public IDisposable Subscribe(IObserver<T> observer)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 while (isRunning)
                 {
-                    observer.OnNext(_func());
+                    observer.OnNext(await _func());
                 }
             });
 
