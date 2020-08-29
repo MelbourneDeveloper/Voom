@@ -2,15 +2,14 @@
 using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Voom
 {
     public static class NotifyPropertyChangedExtensions
     {
         #region Static Fields
-        private static MethodInfo _invokeMethodInfo = typeof(PropertyChangedEventHandler).GetMethod(nameof(PropertyChangedEventHandler.Invoke));
-        private static ConcurrentDictionary<Type, FieldInfo> _memoryCache = new ConcurrentDictionary<Type, FieldInfo>();
+        private static readonly MethodInfo _invokeMethodInfo = typeof(PropertyChangedEventHandler).GetMethod(nameof(PropertyChangedEventHandler.Invoke));
+        private static readonly ConcurrentDictionary<Type, FieldInfo> _memoryCache = new ConcurrentDictionary<Type, FieldInfo>();
         #endregion
 
         #region Extensions
