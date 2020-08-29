@@ -1,8 +1,12 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using Voom;
 
-namespace UnitTests
+namespace Voom.Tests
 {
     [TestClass]
     public class UnitTest1
@@ -110,6 +114,18 @@ namespace UnitTests
 
             Assert.AreEqual(expectedValue, value);
             Assert.IsTrue(callbackMade);
+        }
+
+        [TestMethod]
+        public async Task TestPublish()
+        {
+            var devices = new List<IDevice> { new Device() };
+            var publisher = new Publisher();
+            using (var viewModel = new ViewModel(publisher))
+            {
+                await publisher.PublishAsync<IReadOnlyCollection<IDevice>>(new ReadOnlyCollection<IDevice>(devices));
+                Assert.AreEqual(devices.First(), viewModel.Devices.First());
+            }
         }
 
         private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)

@@ -1,6 +1,9 @@
-﻿namespace Voom
+﻿using System;
+using System.Threading.Tasks;
+
+namespace Voom
 {
-    public static class NotifyPropertyExtensions
+    public static class Extensions
     {
         public static INotifyProperty<T> Get<T>(this INotifyProperty<T> notifyProperty, ValueGet<T> valueGet)
         {
@@ -24,6 +27,16 @@
         {
             notifyProperty.CheckConsiderEqual = checkConsiderEqual;
             return notifyProperty;
+        }
+
+        public static void Subscribe<T>(this ISubscribable subscribable, object subscriber, Action<T> action)
+        {
+            subscribable.Subscribe(subscriber, action);
+        }
+
+        public async static Task PublishAsync<T>(this IPublisher publisher, object? data = null)
+        {
+            await publisher.PublishAsync(data);
         }
     }
 }
