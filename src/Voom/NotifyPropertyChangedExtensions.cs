@@ -26,7 +26,9 @@ namespace Voom
 
             var propertyChangedEventHandler = (PropertyChangedEventHandler)propertyChangedField.GetValue(notifyPropertyChanged);
 
-            if (propertyChangedEventHandler == null) throw new PropertyChangedUnhandledException();
+            //if (propertyChangedEventHandler == null) throw new PropertyChangedUnhandledException();
+
+            if (propertyChangedEventHandler == null) return;
 
             _invokeMethodInfo.Invoke(propertyChangedEventHandler, new object[] { notifyPropertyChanged, new PropertyChangedEventArgs(propertyName) });
         }
