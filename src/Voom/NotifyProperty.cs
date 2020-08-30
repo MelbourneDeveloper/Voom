@@ -10,7 +10,7 @@ namespace Voom
         private readonly INotifyPropertyChanged _notifyPropertyChanged;
         private T _propertyValue;
         private readonly string _propertyName;
-        private ValueSet<T> _valueSetCallback { get; set; }
+        private ValueSet<T> _beforePropertyChanged { get; set; }
         private ValueSet<T> _valueSet;
         private ValueGet<T> _valueGet;
         private CheckEquality<T> _checkConsiderEqual;
@@ -40,7 +40,7 @@ namespace Voom
 
             _valueSet = valueSet;
             _valueGet = valueGet;
-            _valueSetCallback = valueSetCallback;
+            _beforePropertyChanged = valueSetCallback;
             _checkConsiderEqual = checkConsiderEqual;
 
             if (_valueSet == null)
@@ -63,7 +63,7 @@ namespace Voom
         #region Hidden Members
         ValueGet<T> INotifyProperty<T>.ValueGet { get => _valueGet; set => _valueGet = value; }
         ValueSet<T> INotifyProperty<T>.ValueSet { get => _valueSet; set => _valueSet = value; }
-        ValueSet<T> INotifyProperty<T>.BeforePropertyChanged { get => _valueSetCallback; set => _valueSetCallback = value; }
+        ValueSet<T> INotifyProperty<T>.BeforePropertyChanged { get => _beforePropertyChanged; set => _beforePropertyChanged = value; }
         CheckEquality<T> INotifyProperty<T>.CheckConsiderEqual { get => _checkConsiderEqual; set => _checkConsiderEqual = value; }
 
         #endregion
@@ -87,7 +87,7 @@ namespace Voom
                 var isEqual = _checkConsiderEqual(oldValue, value);
 
                 _valueSet(value);
-                _valueSetCallback?.Invoke(value);
+                _beforePropertyChanged?.Invoke(value);
 
                 if (!isEqual)
                 {
