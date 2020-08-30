@@ -6,8 +6,8 @@ namespace Voom
 {
     public class Publisher : ISubscribable, IPublisher
     {
-        private object _lock = new object();
-        private Dictionary<object, List<Delegate>> _handlers = new Dictionary<object, List<Delegate>>();
+        private readonly object _lock = new object();
+        private readonly Dictionary<object, List<Delegate>> _handlers = new Dictionary<object, List<Delegate>>();
 
         async Task IPublisher.PublishAsync(object? value = null)
         {

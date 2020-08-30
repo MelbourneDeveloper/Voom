@@ -6,7 +6,7 @@ namespace Voom
     public class ObserverFactory<T> : IDisposable
     {
         private bool isRunning = true;
-        Func<Task<T>> _func;
+        private readonly Func<Task<T>> _func;
 
         public ObserverFactory(Func<Task<T>> func)
         {
