@@ -82,6 +82,8 @@ namespace Voom
             set
             {
                 var oldValue = _valueGet();
+
+                //TODO: This is comparing the old value to the new value but what if the new value is not relevant? What if the getter gets a completely different value?
                 var isEqual = _checkConsiderEqual(oldValue, value);
 
                 _valueSet(value);
