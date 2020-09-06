@@ -12,7 +12,7 @@ namespace Voom.Tests
         public event PropertyChangedEventHandler? PropertyChanged;
         private bool _isConnected;
         private IDevice? _selectedDevice;
-        ISubscribable _subscribable;
+        PublishingHub _subscribable;
 
 
         public bool IsConnected
@@ -35,10 +35,10 @@ namespace Voom.Tests
             }
         }
 
-        public ViewModel(ISubscribable subscribable)
+        public ViewModel(PublishingHub subscribable)
         {
             _subscribable = subscribable;
-            subscribable.Subscribe(this, new Action<IReadOnlyCollection<IDevice>>(DeviceListUpdated));
+            subscribable.Subscribe<IReadOnlyCollection<IDevice>>(this, DeviceListUpdated);
         }
 
         private void DeviceListUpdated(IReadOnlyCollection<IDevice> devices)

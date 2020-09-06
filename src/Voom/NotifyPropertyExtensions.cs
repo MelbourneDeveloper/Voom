@@ -34,15 +34,5 @@ namespace Voom
         {
             return new NotifyProperty<T>(notifyPropertyChanged, propertyName);
         }
-
-        public static void Subscribe<T>(this ISubscribable subscribable, object subscriber, Action<T> action)
-        {
-            subscribable.Subscribe(subscriber, action);
-        }
-
-        public async static Task PublishAsync<T>(this IPublisher publisher, object? data = null)
-        {
-            await publisher.PublishAsync(data);
-        }
     }
 }
