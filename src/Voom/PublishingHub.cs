@@ -5,20 +5,24 @@ namespace Voom
 {
     public delegate void Next<T>(T value);
 
+    /// <summary>
+    /// This is an experimental class. The public interface may change
+    /// </summary>
     public class PublishingHub
     {
         private readonly object _lock = new object();
-        private readonly Dictionary<object, List<Delegate>> _handlers = new Dictionary<object, List<Delegate>>();
+        private readonly Dictionary<Type, Dictionary<object, List<Delegate>>> _handlers = new Dictionary<Type, Dictionary<object, List<Delegate>>>();
 
         public void Publish<T>(T value)
         {
-            foreach (var delegates in _handlers.Values)
-            {
-                foreach (var @delegate in delegates)
-                {
-                    var next = @delegate as Next<T>;
+            if (!_handlers.TryGetValue(typeof(T), out var delegatesBySubscriber)) return;
 
-                    next?.Invoke(value);
+            foreach (var keyValuePair in delegatesBySubscriber)
+            {
+                foreach (var @delegate in keyValuePair.Value)
+                {
+                    var next = (Next<T>)@delegate;
+                    next(value);
                 }
             }
         }
@@ -27,12 +31,15 @@ namespace Voom
         {
             lock (_lock)
             {
-                if (!_handlers.ContainsKey(subscriber))
+                foreach (var delegatesBySubscriber in _handlers.Values)
                 {
-                    throw new InvalidOperationException();
-                }
+                    if (!delegatesBySubscriber.ContainsKey(subscriber))
+                    {
+                        throw new InvalidOperationException();
+                    }
 
-                _handlers.Remove(subscriber);
+                    delegatesBySubscriber.Remove(subscriber);
+                }
             }
         }
 
@@ -40,10 +47,18 @@ namespace Voom
         {
             lock (_lock)
             {
-                if (!_handlers.TryGetValue(subscriber, out var delegates))
+
+                if (!_handlers.TryGetValue(typeof(T), out var delegatesBySubscriber))
+                {
+                    delegatesBySubscriber = new Dictionary<object, List<Delegate>>();
+                    _handlers.Add(typeof(T), delegatesBySubscriber);
+                }
+
+
+                if (!delegatesBySubscriber.TryGetValue(subscriber, out var delegates))
                 {
                     delegates = new List<Delegate>();
-                    _handlers.Add(subscriber, delegates);
+                    delegatesBySubscriber.Add(subscriber, delegates);
                 }
 
                 delegates.Add(@delegate);
