@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Voom
 {
-    public class Publisher : ISubscribable, IPublisher
+    public delegate void Next<T>(T value);
+
+    public class PublishingHub
     {
         private readonly object _lock = new object();
         private readonly Dictionary<object, List<Delegate>> _handlers = new Dictionary<object, List<Delegate>>();
 
-        async Task IPublisher.PublishAsync(object? value = null)
+        public void Publish<T>(T value)
         {
             foreach (var delegates in _handlers.Values)
             {
                 foreach (var @delegate in delegates)
                 {
-                    var returnValue = @delegate.DynamicInvoke(value);
+                    var next = @delegate as Next<T>;
 
-                    if (returnValue is Task task)
-                    {
-                        await task;
-                    }
+                    next?.Invoke(value);
                 }
             }
         }
 
-        void ISubscribable.Unsubscribe(object subscriber)
+        public void Unsubscribe(object subscriber)
         {
             lock (_lock)
             {
@@ -38,7 +36,7 @@ namespace Voom
             }
         }
 
-        void ISubscribable.Subscribe(object subscriber, Delegate @delegate)
+        public void Subscribe<T>(object subscriber, Next<T> @delegate)
         {
             lock (_lock)
             {
