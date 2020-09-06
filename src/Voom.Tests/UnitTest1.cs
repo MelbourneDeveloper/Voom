@@ -29,7 +29,7 @@ namespace Voom.Tests
         public void TestNotifyPropertyRaisesPropertyChanged()
         {
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
-            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName);
+            var notifyProperty = notifyPropertyChanged.CreateNotifyProperty<string>(PropertyName);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyPropertyChanged.RaisePropertyChanged(PropertyName);
             Assert.IsTrue(_propertyChangedWasRaised);
@@ -39,7 +39,7 @@ namespace Voom.Tests
         public void TestCallbackIsCalled()
         {
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
-            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName).Callback((a) => _callbackValue = true);
+            var notifyProperty = notifyPropertyChanged.CreateNotifyProperty<string>(PropertyName).BeforePropertyChanged((a) => _callbackValue = true);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyProperty.Value = "test";
             Assert.IsTrue(_callbackValue);
@@ -49,7 +49,7 @@ namespace Voom.Tests
         public void TestNeverConsiderValueEqual()
         {
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
-            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName).ConsiderValueEqualWhen((o, n) => false);
+            var notifyProperty = notifyPropertyChanged.CreateNotifyProperty<string>(PropertyName).ConsiderValueEqualWhen((o, n) => false);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyProperty.Value = null;
             Assert.IsTrue(_propertyChangedWasRaised);
@@ -59,7 +59,7 @@ namespace Voom.Tests
         public void TestAlwaysConsiderValueEqual()
         {
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
-            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName).ConsiderValueEqualWhen((o, n) => true);
+            var notifyProperty = notifyPropertyChanged.CreateNotifyProperty<string>(PropertyName).ConsiderValueEqualWhen((o, n) => true);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyProperty.Value = null;
             Assert.IsFalse(_propertyChangedWasRaised);
@@ -69,7 +69,7 @@ namespace Voom.Tests
         public void TestEqualValueRaisePropertyChangedDoesntFire()
         {
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
-            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName);
+            var notifyProperty = notifyPropertyChanged.CreateNotifyProperty<string>(PropertyName);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyProperty.Value = null;
             Assert.IsFalse(_propertyChangedWasRaised);
@@ -79,18 +79,18 @@ namespace Voom.Tests
         public void TestNotEqualValueRaisePropertyChangedDoesFire()
         {
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
-            var notifyProperty = new NotifyProperty<string>(notifyPropertyChanged, PropertyName);
+            var notifyProperty = notifyPropertyChanged.CreateNotifyProperty<string>(PropertyName);
             notifyPropertyChanged.PropertyChanged += NotifyPropertyChanged_PropertyChanged;
             notifyProperty.Value = "";
             Assert.IsTrue(_propertyChangedWasRaised);
         }
 
         [TestMethod]
-        public void TestThrowsEventHandlerNotFound()
+        public void TestDoesntEventHandlerNotFound()
         {
-            var notifyProperty = new NotifyProperty<string>(new MockNotifyPropertyChanged(), PropertyName);
+            var notifyProperty = new MockNotifyPropertyChanged().CreateNotifyProperty<string>(PropertyName);
 
-            Assert.ThrowsException<PropertyChangedUnhandledException>(() => notifyProperty.Value = "test");
+            notifyProperty.Value = "test";
         }
 
 
@@ -103,8 +103,8 @@ namespace Voom.Tests
 
             var notifyPropertyChanged = new MockNotifyPropertyChanged();
             var notifyProperty =
-                new NotifyProperty<int>(notifyPropertyChanged, PropertyName)
-                .Callback(a => callbackMade = true)
+                notifyPropertyChanged.CreateNotifyProperty<int>(PropertyName)
+                .BeforePropertyChanged(a => callbackMade = true)
                 .ConsiderValueEqualWhen((o, n) => o != n)
                 .Get(() => value)
                 .Set((v) => value = v);
@@ -120,10 +120,10 @@ namespace Voom.Tests
         public async Task TestPublish()
         {
             var devices = new List<IDevice> { new Device() };
-            var publisher = new Publisher();
+            var publisher = new PublishingHub();
             using (var viewModel = new ViewModel(publisher))
             {
-                await publisher.PublishAsync<IReadOnlyCollection<IDevice>>(new ReadOnlyCollection<IDevice>(devices));
+                publisher.Publish<IReadOnlyCollection<IDevice>>(new ReadOnlyCollection<IDevice>(devices));
                 Assert.AreEqual(devices.First(), viewModel.Devices.First());
             }
         }
