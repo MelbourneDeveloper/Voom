@@ -1,10 +1,14 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Voom;
+using System.Reactive;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace Voom.Tests
 {
@@ -126,6 +130,59 @@ namespace Voom.Tests
                 publisher.Publish<IReadOnlyCollection<IDevice>>(new ReadOnlyCollection<IDevice>(devices));
                 Assert.AreEqual(devices.First(), viewModel.Devices.First());
             }
+        }
+
+
+        [TestMethod]
+        public async Task SampleNotTestRxUI1()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+
+            var subject = new Subject<string>();
+
+            subject.Subscribe((id) => notifyPropertyChanged.Id = id);
+
+            subject.OnNext("123");
+        }
+
+        [TestMethod]
+        public async Task SampleNotTestRxUI2()
+        {
+            var subject = new Subject<string>();
+
+            new MockNotifyPropertyChanged(subject);
+
+            subject.OnNext("123");
+        }
+
+        [TestMethod]
+        public async Task SampleNotTestRxUI3()
+        {
+            var subject = new Subject<string>();
+
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+
+            notifyPropertyChanged.PropertyChanged += (s, e) => subject.OnNext(notifyPropertyChanged.Id);
+        }
+
+        [TestMethod]
+        public async Task SampleNotTestRxUI4()
+        {
+            var notifyPropertyChanged = new MockNotifyPropertyChanged();
+
+            var observable = Observable.FromEventPattern(notifyPropertyChanged, nameof(MockNotifyPropertyChanged.PropertyChanged));
+
+            observable.Where((a) =>
+            {
+                var eventArgs = (PropertyChangedEventArgs)a.EventArgs;
+                return eventArgs.PropertyName == nameof(MockNotifyPropertyChanged.Id) ? true : false;
+            }).Subscribe((a) =>
+            {
+                var eventArgs = (PropertyChangedEventArgs)a.EventArgs;
+                Console.WriteLine($"Property: { eventArgs.PropertyName} Value: {notifyPropertyChanged.Id}");
+            });
+
+            notifyPropertyChanged.Id = "test";
         }
 
         private void NotifyPropertyChanged_PropertyChanged(object sender, PropertyChangedEventArgs e)
